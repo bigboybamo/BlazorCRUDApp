@@ -1,0 +1,53 @@
+﻿@page "/update/{clubId:int}"
+@rendermode InteractiveServer
+@using BlazorWebApp.Models
+@inject BlazorWebApp.Services.IClubService ClubService
+@inject NavigationManager Navigation
+
+<h3>Update Club</h3>
+
+@if (club == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="mb-3">
+        <label for="clubName" class="form-label">Club Name</label>
+        <input type="text" class="form-control" id="clubName" @bind="club.ClubName" />
+    </div>
+    <div class="mb-3">
+        <label for="country" class="form-label">Country</label>
+        <input type="text" class="form-control" id="country" @bind="club.Country" />
+    </div>
+    <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+    <button class="btn btn-primary" @onclick="UpdateClub">Save</button>
+}
+
+@code {
+    [Parameter]
+    public int clubId { get; set; }
+
+    private Models.Club club;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Load the club to be updated
+        club = await ClubService.GetClub(clubId);
+    }
+
+    private async Task UpdateClub()
+    {
+        // Update the club using the service
+        await ClubService.UpdateClub(club);
+
+        // Redirect back to the club list page
+        Navigation.NavigateTo("/club");
+    }
+
+    private void Cancel()
+    {
+        // Navigate back to the club list page
+        Navigation.NavigateTo("/club");
+    }
+}
